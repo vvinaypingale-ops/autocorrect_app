@@ -1,0 +1,19 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+
+# IDEs/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

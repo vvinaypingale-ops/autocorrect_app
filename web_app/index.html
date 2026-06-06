@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vinax AutoCorrect AI - Writing Assistant</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- App Shell -->
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation (Material 3 Rail/Drawer) -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <span class="material-symbols-rounded logo-icon">auto_fix_high</span>
+        <h1 class="logo-text">Vinax <span>AI</span></h1>
+      </div>
+
+      <div class="nav-items">
+        <a href="#write" class="nav-item active" id="nav-write">
+          <span class="material-symbols-rounded">edit_note</span>
+          <span class="nav-label">Write & Correct</span>
+        </a>
+        <a href="#rewrite" class="nav-item" id="nav-rewrite">
+          <span class="material-symbols-rounded">transform</span>
+          <span class="nav-label">Smart Rewriter</span>
+        </a>
+        <a href="#email" class="nav-item" id="nav-email">
+          <span class="material-symbols-rounded">mail</span>
+          <span class="nav-label">Email Assistant</span>
+        </a>
+        <a href="#proofread" class="nav-item" id="nav-proofread">
+          <span class="material-symbols-rounded">analytics</span>
+          <span class="nav-label">Proofreader</span>
+        </a>
+        <a href="#tone" class="nav-item" id="nav-tone">
+          <span class="material-symbols-rounded">psychology</span>
+          <span class="nav-label">Tone Converter</span>
+        </a>
+        <a href="#analytics" class="nav-item" id="nav-analytics">
+          <span class="material-symbols-rounded">monitoring</span>
+          <span class="nav-label">Writing Stats</span>
+        </a>
+        <a href="#history" class="nav-item" id="nav-history">
+          <span class="material-symbols-rounded">history</span>
+          <span class="nav-label">History</span>
+        </a>
+        <a href="#settings" class="nav-item" id="nav-settings">
+          <span class="material-symbols-rounded">settings</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="api-status" id="api-status-badge">
+          <span class="status-dot warning"></span>
+          <span class="status-text">Demo Mode</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menu-toggle-btn">
+            <span class="material-symbols-rounded">menu</span>
+          </button>
+          <h2 class="view-title" id="current-view-title">Write & Correct</h2>
+        </div>
+        
+        <div class="header-right">
+          <!-- Voice Button -->
+          <button class="header-action-btn" id="voice-input-btn" title="Voice to Text Correction">
+            <span class="material-symbols-rounded">mic</span>
+          </button>
+
+          <!-- Language Selector -->
+          <div class="lang-selector-container">
+            <span class="material-symbols-rounded lang-icon">language</span>
+            <select id="global-lang-select" class="lang-select">
+              <option value="English">English</option>
+              <option value="Hindi">Hindi (हिंदी)</option>
+              <option value="Spanish">Spanish (Español)</option>
+              <option value="French">French (Français)</option>
+              <option value="German">German (Deutsch)</option>
+              <option value="Arabic">Arabic (العربية)</option>
+              <option value="Japanese">Japanese (日本語)</option>
+              <option value="Chinese">Chinese (中文)</option>
+            </select>
+          </div>
+
+          <!-- Theme Toggle -->
+          <button class="header-action-btn" id="theme-toggle-btn" title="Toggle Light/Dark Mode">
+            <span class="material-symbols-rounded" id="theme-icon">light_mode</span>
+          </button>
+          
+          <!-- Profile -->
+          <div class="profile-chip">
+            <div class="profile-avatar">V</div>
+            <div class="profile-info">
+              <span class="profile-name">Vinay</span>
+              <span class="profile-role">Pro Writer</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- View Containers -->
+      <div class="view-container">
+
+        <!-- 1. WRITE & CORRECT VIEW -->
+        <section id="view-write" class="view-section active-section">
+          <div class="editor-grid">
+            
+            <!-- Editor Column -->
+            <div class="editor-card glass-panel">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <span class="material-symbols-rounded text-primary">edit_square</span>
+                  <h3>Compose Text</h3>
+                </div>
+                <div class="word-count-badge">
+                  <span id="editor-word-count">0</span> words
+                </div>
+              </div>
+              <div class="editor-body">
+                <textarea id="editor-textarea" placeholder="Start typing here... For example: 'Helo how aree you' or 'He go to office yesterday'..." autofocus></textarea>
+                <div class="editor-overlay-hints" id="editor-hints-container"></div>
+              </div>
+              <div class="editor-footer">
+                <div class="left-actions">
+                  <button class="btn btn-secondary btn-icon-only" id="editor-clear-btn" title="Clear text">
+                    <span class="material-symbols-rounded">delete</span>
+                  </button>
+                  <button class="btn btn-secondary btn-icon-only" id="editor-paste-btn" title="Paste text">
+                    <span class="material-symbols-rounded">content_paste</span>
+                  </button>
+                </div>
+                <div class="right-actions">
+                  <button class="btn btn-primary" id="editor-check-btn">
+                    <span class="material-symbols-rounded">auto_fix_high</span>
+                    <span>Fix Grammar</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Suggestions Column -->
+            <div class="suggestions-card glass-panel">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <span class="material-symbols-rounded text-accent">rule</span>
+                  <h3>AI Corrections</h3>
+                </div>
+                <span class="badge" id="suggestions-count-badge">0 Suggestions</span>
+              </div>
+              <div class="suggestions-body" id="suggestions-list-container">
+                <div class="empty-state">
+                  <span class="material-symbols-rounded empty-icon">check_circle</span>
+                  <p class="empty-title">All clean!</p>
+                  <p class="empty-desc">Type some text and click "Fix Grammar" or see automatic corrections appear here.</p>
+                </div>
+              </div>
+              <div class="suggestions-footer" id="suggestions-footer-actions" style="display:none;">
+                <button class="btn btn-outline w-full" id="apply-all-suggestions-btn">
+                  <span class="material-symbols-rounded">done_all</span>
+                  <span>Apply All Corrections</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. SMART REWRITER VIEW -->
+        <section id="view-rewrite" class="view-section">
+          <div class="panel-layout">
+            <div class="panel-input glass-panel">
+              <div class="card-header">
+                <h3>Text to Enhance</h3>
+              </div>
+              <div class="panel-body">
+                <textarea id="rewrite-input" placeholder="Enter a sentence or paragraph you want to rewrite..."></textarea>
+                <div class="rewrite-modes-grid">
+                  <button class="mode-chip active" data-mode="shorten">
+                    <span class="material-symbols-rounded">compress</span> Shorten
+                  </button>
+                  <button class="mode-chip" data-mode="expand">
+                    <span class="material-symbols-rounded">expand</span> Expand
+                  </button>
+                  <button class="mode-chip" data-mode="simplify">
+                    <span class="material-symbols-rounded">bolt</span> Simplify
+                  </button>
+                  <button class="mode-chip" data-mode="persuasive">
+                    <span class="material-symbols-rounded">campaign</span> Persuasive
+                  </button>
+                  <button class="mode-chip" data-mode="humanize">
+                    <span class="material-symbols-rounded">face</span> Humanize AI
+                  </button>
+                  <button class="mode-chip" data-mode="readability">
+                    <span class="material-symbols-rounded">menu_book</span> Flow
+                  </button>
+                </div>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-primary w-full" id="rewrite-submit-btn">
+                  <span class="material-symbols-rounded">bolt</span>
+                  <span>Rewrite with AI</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="panel-output glass-panel">
+              <div class="card-header">
+                <h3>Improved Version</h3>
+                <button class="btn btn-secondary btn-icon-only" id="rewrite-copy-btn" title="Copy output">
+                  <span class="material-symbols-rounded">content_copy</span>
+                </button>
+              </div>
+              <div class="panel-body output-area" id="rewrite-output-box">
+                <div class="empty-state">
+                  <span class="material-symbols-rounded empty-icon">auto_awesome</span>
+                  <p class="empty-title">AI Rewriter</p>
+                  <p class="empty-desc">Choose a mode and click rewrite to generate enhanced sentences.</p>
+                </div>
+              </div>
+              <div class="panel-explanation-box" id="rewrite-explanation-box" style="display:none;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. EMAIL ASSISTANT VIEW -->
+        <section id="view-email" class="view-section">
+          <div class="panel-layout">
+            <div class="panel-input glass-panel">
+              <div class="card-header">
+                <h3>Email Specification</h3>
+              </div>
+              <div class="panel-body">
+                <div class="input-group">
+                  <label for="email-prompt">What is the email about?</label>
+                  <textarea id="email-prompt" placeholder="e.g., Requesting sick leave for tomorrow due to fever, or asking the client to review the updated contract."></textarea>
+                </div>
+                
+                <div class="form-row">
+                  <div class="input-group">
+                    <label for="email-template">Template Style</label>
+                    <select id="email-template" class="custom-select">
+                      <option value="Business">Business / Client</option>
+                      <option value="Job Application">Job Application</option>
+                      <option value="Leave Request">Leave Request</option>
+                      <option value="Customer Support">Customer Support</option>
+                      <option value="Follow-up">Follow-up Reminder</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <label for="email-tone">Writing Tone</label>
+                    <select id="email-tone" class="custom-select">
+                      <option value="Professional">Professional</option>
+                      <option value="Formal">Formal</option>
+                      <option value="Friendly">Friendly</option>
+                      <option value="Casual">Casual</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="input-group">
+                  <label for="email-recipient">Recipient Name (Optional)</label>
+                  <input type="text" id="email-recipient" placeholder="e.g. Mr. Sharma, Sarah Johnson">
+                </div>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-primary w-full" id="email-generate-btn">
+                  <span class="material-symbols-rounded">outgoing_mail</span>
+                  <span>Generate Email Draft</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="panel-output glass-panel">
+              <div class="card-header">
+                <h3>Email Output</h3>
+                <div class="actions">
+                  <button class="btn btn-secondary btn-icon-only" id="email-copy-btn" title="Copy entire email">
+                    <span class="material-symbols-rounded">content_copy</span>
+                  </button>
+                </div>
+              </div>
+              <div class="panel-body email-result-body">
+                <div class="email-subject-line" id="email-subject-display" style="display:none;">
+                  <strong>Subject:</strong> <span id="email-subject-text"></span>
+                </div>
+                <div class="output-area email-body-display" id="email-body-display">
+                  <div class="empty-state">
+                    <span class="material-symbols-rounded empty-icon">drafts</span>
+                    <p class="empty-title">Email Draft</p>
+                    <p class="empty-desc">Fill in details on the left to draft high-converting emails.</p>
+                  </div>
+                </div>
+                <div class="follow-up-section" id="email-follow-ups" style="display:none;">
+                  <h4>Follow-up Reply Suggestions:</h4>
+                  <div class="suggestions-chips-group" id="email-follow-up-chips"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. DOCUMENT PROOFREADER VIEW -->
+        <section id="view-proofread" class="view-section">
+          <div class="proofreader-layout">
+            <div class="upload-section glass-panel">
+              <div class="drag-drop-zone" id="proofread-drop-zone">
+                <span class="material-symbols-rounded upload-icon">cloud_upload</span>
+                <h4>Drag & Drop your document here</h4>
+                <p>Supports PDF, DOCX, TXT (Max 5MB)</p>
+                <button class="btn btn-secondary" onclick="document.getElementById('proofread-file-input').click()">Browse Files</button>
+                <input type="file" id="proofread-file-input" style="display:none;" accept=".txt,.pdf,.docx">
+              </div>
+              <div class="uploaded-file-card" id="proofread-file-card" style="display:none;">
+                <span class="material-symbols-rounded file-type-icon">description</span>
+                <div class="file-details">
+                  <span class="file-name" id="proofread-file-name">document.txt</span>
+                  <span class="file-size" id="proofread-file-size">12 KB</span>
+                </div>
+                <button class="btn-clear" id="proofread-remove-file-btn">
+                  <span class="material-symbols-rounded">close</span>
+                </button>
+              </div>
+              <div class="proofread-actions">
+                <button class="btn btn-primary w-full" id="proofread-submit-btn" disabled>
+                  <span class="material-symbols-rounded">spellcheck</span>
+                  <span>Run Document Proofreading Audit</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Proofreading Report View -->
+            <div class="report-section glass-panel" id="proofread-report-container" style="display:none;">
+              <div class="card-header">
+                <h3>Document Proofreading Audit Report</h3>
+                <span class="badge badge-success">Completed</span>
+              </div>
+              <div class="report-body">
+                <div class="metrics-row">
+                  <div class="metric-card">
+                    <span class="metric-value" id="proofread-score-grammar">0</span>
+                    <span class="metric-label">Grammar Score</span>
+                  </div>
+                  <div class="metric-card">
+                    <span class="metric-value" id="proofread-score-readability">0</span>
+                    <span class="metric-label">Readability Score</span>
+                  </div>
+                  <div class="metric-card">
+                    <span class="metric-value" id="proofread-score-clarity">0</span>
+                    <span class="metric-label">Clarity Score</span>
+                  </div>
+                </div>
+                
+                <div class="report-feedback-box" id="proofread-feedback-text"></div>
+
+                <div class="corrections-list-wrapper">
+                  <h4>Identified Issues & Fixes:</h4>
+                  <div class="corrections-checklist" id="proofread-corrections-checklist"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. TONE CONVERTER VIEW -->
+        <section id="view-tone" class="view-section">
+          <div class="panel-layout">
+            <div class="panel-input glass-panel">
+              <div class="card-header">
+                <h3>Tone Selection</h3>
+              </div>
+              <div class="panel-body">
+                <div class="input-group">
+                  <label for="tone-input">Text to Rephrase</label>
+                  <textarea id="tone-input" placeholder="e.g. I need this done ASAP. Tell me when you will complete."></textarea>
+                </div>
+                <div class="tone-picker-grid">
+                  <button class="tone-btn active" data-tone="Professional">
+                    <span class="material-symbols-rounded">work</span> Professional
+                  </button>
+                  <button class="tone-btn" data-tone="Formal">
+                    <span class="material-symbols-rounded">gavel</span> Formal
+                  </button>
+                  <button class="tone-btn" data-tone="Casual">
+                    <span class="material-symbols-rounded">chat_bubble</span> Casual
+                  </button>
+                  <button class="tone-btn" data-tone="Friendly">
+                    <span class="material-symbols-rounded">sentiment_satisfied</span> Friendly
+                  </button>
+                  <button class="tone-btn" data-tone="Academic">
+                    <span class="material-symbols-rounded">school</span> Academic
+                  </button>
+                  <button class="tone-btn" data-tone="Business">
+                    <span class="material-symbols-rounded">query_stats</span> Business
+                  </button>
+                  <button class="tone-btn" data-tone="Marketing">
+                    <span class="material-symbols-rounded">storefront</span> Marketing
+                  </button>
+                  <button class="tone-btn" data-tone="Social Media">
+                    <span class="material-symbols-rounded">tag</span> Social Media
+                  </button>
+                </div>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-primary w-full" id="tone-submit-btn">
+                  <span class="material-symbols-rounded">swap_horiz</span>
+                  <span>Apply Tone Shifting</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="panel-output glass-panel">
+              <div class="card-header">
+                <h3>Re-Toned Output</h3>
+                <button class="btn btn-secondary btn-icon-only" id="tone-copy-btn" title="Copy result">
+                  <span class="material-symbols-rounded">content_copy</span>
+                </button>
+              </div>
+              <div class="panel-body output-area" id="tone-output-box">
+                <div class="empty-state">
+                  <span class="material-symbols-rounded empty-icon">palette</span>
+                  <p class="empty-title">Tone Converter</p>
+                  <p class="empty-desc">Choose a target style like Professional or casual and press Apply to re-tone your text.</p>
+                </div>
+              </div>
+              <div class="panel-explanation-box" id="tone-explanation-box" style="display:none;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. ANALYTICS VIEW -->
+        <section id="view-analytics" class="view-section">
+          <div class="analytics-layout">
+            <div class="stats-overview-grid">
+              <div class="stat-widget glass-panel">
+                <div class="widget-icon primary">
+                  <span class="material-symbols-rounded">spellcheck</span>
+                </div>
+                <div class="widget-details">
+                  <span class="widget-title">Average Grammar Score</span>
+                  <span class="widget-value" id="stats-avg-grammar">94%</span>
+                </div>
+              </div>
+              <div class="stat-widget glass-panel">
+                <div class="widget-icon accent">
+                  <span class="material-symbols-rounded">menu_book</span>
+                </div>
+                <div class="widget-details">
+                  <span class="widget-title">Readability Score</span>
+                  <span class="widget-value" id="stats-avg-readability">82</span>
+                </div>
+              </div>
+              <div class="stat-widget glass-panel">
+                <div class="widget-icon success">
+                  <span class="material-symbols-rounded">edit</span>
+                </div>
+                <div class="widget-details">
+                  <span class="widget-title">Total Words Analyzed</span>
+                  <span class="widget-value" id="stats-total-words">14,250</span>
+                </div>
+              </div>
+              <div class="stat-widget glass-panel">
+                <div class="widget-icon warning">
+                  <span class="material-symbols-rounded">checklist</span>
+                </div>
+                <div class="widget-details">
+                  <span class="widget-title">Errors Corrected</span>
+                  <span class="widget-value" id="stats-errors-corrected">482</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="charts-grid">
+              <div class="chart-card glass-panel">
+                <div class="card-header">
+                  <h3>Writing Quality Distribution</h3>
+                </div>
+                <div class="card-body gauge-container">
+                  <svg class="progress-ring-svg" width="160" height="160">
+                    <circle class="progress-ring-bg" stroke="#252538" stroke-width="12" fill="transparent" r="70" cx="80" cy="80"/>
+                    <circle class="progress-ring-bar" id="ring-grammar" stroke="var(--primary-color)" stroke-dasharray="440" stroke-dashoffset="44" stroke-width="12" fill="transparent" r="70" cx="80" cy="80"/>
+                    <text class="progress-ring-text" x="80" y="85" font-family="Outfit" font-size="24" fill="var(--text-color)" text-anchor="middle" font-weight="700">90%</text>
+                  </svg>
+                  <p class="gauge-label">Overall Grammar & Vocabulary Fit</p>
+                </div>
+              </div>
+
+              <div class="chart-card glass-panel">
+                <div class="card-header">
+                  <h3>Frequently Used Tones</h3>
+                </div>
+                <div class="card-body bar-chart-body">
+                  <div class="bar-row">
+                    <span class="bar-label">Professional</span>
+                    <div class="bar-track">
+                      <div class="bar-fill fill-primary" style="width: 75%;"></div>
+                    </div>
+                    <span class="bar-val">75%</span>
+                  </div>
+                  <div class="bar-row">
+                    <span class="bar-label">Casual</span>
+                    <div class="bar-track">
+                      <div class="bar-fill fill-accent" style="width: 45%;"></div>
+                    </div>
+                    <span class="bar-val">45%</span>
+                  </div>
+                  <div class="bar-row">
+                    <span class="bar-label">Formal</span>
+                    <div class="bar-track">
+                      <div class="bar-fill fill-success" style="width: 30%;"></div>
+                    </div>
+                    <span class="bar-val">30%</span>
+                  </div>
+                  <div class="bar-row">
+                    <span class="bar-label">Academic</span>
+                    <div class="bar-track">
+                      <div class="bar-fill fill-warning" style="width: 15%;"></div>
+                    </div>
+                    <span class="bar-val">15%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. HISTORY VIEW -->
+        <section id="view-history" class="view-section">
+          <div class="history-layout glass-panel">
+            <div class="card-header">
+              <h3>Correction Logs</h3>
+              <button class="btn btn-secondary" id="history-clear-all-btn">Clear History</button>
+            </div>
+            <div class="history-list" id="history-list-container">
+              <!-- Dynamically populated -->
+              <div class="empty-state">
+                <span class="material-symbols-rounded empty-icon">update</span>
+                <p class="empty-title">No correction history</p>
+                <p class="empty-desc">Your corrected documents will save automatically to history.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. SETTINGS VIEW -->
+        <section id="view-settings" class="view-section">
+          <div class="settings-grid">
+            <div class="settings-card glass-panel">
+              <div class="card-header">
+                <h3>API Configuration</h3>
+              </div>
+              <div class="card-body">
+                <div class="input-group">
+                  <label for="settings-gemini-key">Gemini API Key</label>
+                  <input type="password" id="settings-gemini-key" placeholder="AIzaSy...">
+                  <small class="helper-text">Enter your Google Gemini API key to enable live AI checking. Saved locally in your browser.</small>
+                </div>
+                <button class="btn btn-primary" id="save-api-settings-btn">Save API Key</button>
+              </div>
+            </div>
+
+            <div class="settings-card glass-panel">
+              <div class="card-header">
+                <h3>Custom Dictionary</h3>
+              </div>
+              <div class="card-body">
+                <div class="input-group-inline">
+                  <input type="text" id="settings-dictionary-input" placeholder="Add custom word (e.g. Vinax)">
+                  <button class="btn btn-primary" id="add-dict-word-btn">Add</button>
+                </div>
+                <div class="dictionary-chips" id="dictionary-chips-container">
+                  <!-- Custom words chips -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Chat Assistant Floating Button and Panel -->
+  <div class="chat-assistant-container" id="chat-widget-container">
+    <button class="chat-toggle-btn" id="chat-toggle-btn" title="AI Writing Assistant Chat">
+      <span class="material-symbols-rounded">chat</span>
+      <span class="pulse-indicator"></span>
+    </button>
+
+    <div class="chat-panel glass-panel" id="chat-panel" style="display:none;">
+      <div class="chat-header">
+        <div class="chat-title-group">
+          <span class="material-symbols-rounded logo-icon">auto_fix_high</span>
+          <div>
+            <h4>Vinax Writing Assistant</h4>
+            <small>Gemini-powered Chat</small>
+          </div>
+        </div>
+        <button class="btn-clear" id="chat-close-btn">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div class="chat-body" id="chat-body-messages">
+        <div class="chat-message bot">
+          <p>Hi Vinay! How can I help you write today? You can ask me to:
+            <br>• "Make my composition more professional"
+            <br>• "Draft a short message for LinkedIn"
+            <br>• "Check grammar of my draft"
+          </p>
+        </div>
+      </div>
+      <div class="chat-footer">
+        <input type="text" id="chat-input-field" placeholder="Ask assistant to edit/write...">
+        <button class="chat-send-btn" id="chat-send-btn">
+          <span class="material-symbols-rounded">send</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice overlay dialog modal -->
+  <div class="modal-overlay" id="voice-modal" style="display:none;">
+    <div class="modal-card glass-panel">
+      <div class="modal-header">
+        <h3>Voice to Text Correction</h3>
+        <button class="btn-clear" id="voice-modal-close">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="voice-wave-container" id="voice-waves">
+          <div class="wave"></div>
+          <div class="wave"></div>
+          <div class="wave"></div>
+          <div class="wave"></div>
+          <div class="wave"></div>
+        </div>
+        <p class="voice-status-text" id="voice-status">Listening...</p>
+        <p class="voice-preview-text" id="voice-preview">"Speak clearly, your voice will be transcribed and corrected here..."</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="voice-cancel-btn">Cancel</button>
+        <button class="btn btn-primary" id="voice-process-btn" style="display:none;">Generate Polished Text</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Code -->
+  <script src="app.js"></script>
+</body>
+</html>
